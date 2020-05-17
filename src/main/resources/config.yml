@@ -1,0 +1,130 @@
+#===============================================================================#
+#                        VETERANIAS - RANGOS DE ASCENSO                         #
+#          Plugin que gestiona el genero de los rangos de ascenso               #
+#===============================================================================#
+# Author: AaronPB - Server: play.minexilon.com                                  #
+
+#===============================================================================#
+#                      VETERANIAS - CONFIGURACION GENERAL                       #
+#===============================================================================#
+
+# Cabecera del plugin para los mensajes que envia a los usuarios
+HeaderTag: "&6&l|&3&l|&5&l|&7&l&m| &r&fVeteranias&7&l&m >&r "
+
+# Muestra mensajes de verbositylvl debug en consola
+DebugMode: true
+
+# Activar/desactivar efecto de levitacion (duracion en segundos)
+levitation_effect: true
+levitation_duration: 2
+
+# Cooldown para volver a ejecutar el /ascender (en segundos)
+setcooldown: true
+cooldowntime: 30
+
+#===============================================================================#
+#                    VETERANIAS - CONFIGURACION DE LOS RANGOS                   #
+#===============================================================================#
+
+# Formato visual del rango que se aisgna a los ususarios.
+titleformatpre: '&7['
+titleformatpost: '&7]&r'
+
+# Lista de rangos
+# Cada rango DEBE cumplir el siguiente formato para poder registrarse de forma
+# correcta en el plugin:
+#
+# titulo: se puede poner cualquier titulo deseado, no tiene relevancia.
+#   lpgroup: Nombre del grupo actual del user, definido en LUCKPERMS.
+#   lpgroupascend: Nombre del grupo al que asciende el user, definido en LUCKPERMS.
+#                  (Si es el �ltimo grupo, poner: '')
+#   title_male: Nombre del rango en masculino. DEBE incluir el color al principio.
+#   title_female: Nombre del rango en femenino. DEBE incluir el color al principio.
+#   description: Descripciones de lo que trae el nuevo rango. (Es opcional)
+#                Hay varios tipos, y cada uno tiene su color por defecto:
+#   -  'NEW:texto'          Una nueva novedad.
+#   -  'NEW:&3tex&2&oto'    Para poner varios, simplemente incluye mas lineas.
+#                           Se pueden poner tambien colores en el texto.
+#   -  'HOME:texto'         Mejora referente a los homes.
+#   -  'TOWNYPLOT:texto'    Mejora referente a los plots de towny.
+#   -  'CHESTSHOP:texto'    Mejora referente a los cofres-tienda.
+#   -  'CREATIVE:texto'     Mejora referente a las parcelas de mundo creativo.
+#   -  'PET:texto'          Mejora referente a los pets.
+#   cost: 0 - Coste de ascenso del grupo actual al siguiente.
+#   commands: Comandos que se ejecutan cuando el usuario asciende. (Es opcional)
+#   - 'give %player% diamond_block 1' Comando de ejemplo.
+
+ascensionlist:
+  Ermitano:
+    lpgroup: ermitano
+    lpgroupascend: peregrino
+    title_male: '&7:Ermitaño'
+    title_female: '&7:Ermitaña'
+    cost: 1000
+    description:
+      item1:
+        title: '&6&lIngresa en una ciudad!'
+        type: furnace
+        amount: 1
+        lore:
+        - '&7Puedes ingresar en una ciudad,'
+        - '&7ya sea invitacion o una ciudad'
+        - '&7abierta via &6/t join &ociudad'
+      item2:
+        title: '&9&lOtro home extra!'
+        type: compass
+        amount: 1
+        lore:
+        - '&fHomes totales: 2'
+        - '&7Puedes guardar otra localizacion'
+        - '&7con &9/sethome &onombre'
+    commands: []
+  Peregrino:
+    lpgroup: peregrino
+    lpgroupascend: nomada
+    title_male: '&7:Peregrino'
+    title_female: '&7:Peregrina'
+    description:
+      item1:
+        title: '&9&lOtro home extra!'
+        type: compass
+        amount: 1
+        lore:
+        - '&fHomes totales: 3'
+        - '&7Puedes guardar otra localizacion'
+        - '&7con &9/sethome &onombre'
+    cost: 2500
+    commands: []
+  Nomada:
+    lpgroup: nomada
+    lpgroupascend: explorador
+    title_male: '&7:Nomada'
+    title_female: '&7:Nomada'
+    description:
+      item1:
+        title: '&9&lOtro home extra!'
+        type: compass
+        amount: 1
+        lore:
+        - '&fHomes totales: 4'
+        - '&7Puedes guardar otra localizacion'
+        - '&7con &9/sethome &onombre'
+    cost: 4000
+    commands: []
+  Explorador:
+    lpgroup: explorador
+    lpgroupascend: aventurero
+    title_male: '&f:Explorador'
+    title_female: '&f:Exploradora'
+    description:
+      item1:
+        title: '&6&lUna papelera magica'
+        type: cauldron
+        amount: 1
+        lore:
+        - '&7Puedes usar una papelera virtual'
+        - '&7via &6/disposal &7o poniendolo'
+        - '&7en un &6cartel &7con el texto'
+        - '&7[disposal] en la primera linea.'
+    cost: 6000
+    commands: []

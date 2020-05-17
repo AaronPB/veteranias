@@ -1,0 +1,26 @@
+author: AaronPB
+main: com.aaronpb.veteranias.Veteranias
+name: veteranias
+description: Plugin de las veteranias del servidor MinExilon
+website: www.minexilon.com
+version: 0.0.1
+api-version: 1.15
+
+depend: [LuckPerms, Vault]
+
+commands:
+  ascender:
+    aliases:
+    - rankup
+    usage: /<command>
+    description: Command to ascend to the next veterania
+  vetreload:
+    usage: /<command>
+    description: Command for save and rewrite config params
+    permission: veteranias.admin
+    permission-message: No tienes permisos para ejecutar este comando.
+
+permissions:
+  veteranias.admin:
+    description: Needed to use administrator commands such as config reload.
+    default: op
