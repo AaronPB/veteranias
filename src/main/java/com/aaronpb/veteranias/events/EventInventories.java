@@ -68,13 +68,16 @@ public class EventInventories implements Listener {
               public void run() {
                 String playergroup = LPmng.getPlayerGroup(player);
 
+                String nextgroup = ConfigManager.ranksmap.get(playergroup)
+                    .getRanklpgroupascend();
+
                 if (ECONmng.hasPlayerMoney(player,
-                    ConfigManager.ranksmap.get(playergroup).getRankCost())) {
+                    ConfigManager.ranksmap.get(nextgroup).getRankCost())) {
                   Boolean playercooldown = false;
 
                   if (cooldown.containsKey(player.getUniqueId())) {
                     Utils.sendToServerConsole("debug",
-                        "COOLDOWN_SYS - Estoy aqui!");
+                        "COOLDOWN_SYS ON at player: " + player.getName());
                     long secondsleft = ((cooldown.get(player.getUniqueId())
                         / 1000 + ConfigManager.cooldown_time)
                         - (System.currentTimeMillis() / 1000));
@@ -92,7 +95,7 @@ public class EventInventories implements Listener {
 
                     // Upgrade process and effects
                     ECONmng.takePlayerMoney(player,
-                        ConfigManager.ranksmap.get(playergroup).getRankCost());
+                        ConfigManager.ranksmap.get(nextgroup).getRankCost());
                     LPmng.promotePlayer(player);
                     player.playSound(player.getLocation(),
                         Sound.UI_TOAST_CHALLENGE_COMPLETE, 1, 1);
@@ -109,16 +112,15 @@ public class EventInventories implements Listener {
                             }
                           });
                     }
-                    playergroup = LPmng.getPlayerGroup(player);
 
-                    String promotetitle = ConfigManager.ranksmap
-                        .get(playergroup).getRankTitleColor()
-                        + ConfigManager.ranksmap.get(playergroup)
+                    String promotetitle = ConfigManager.ranksmap.get(nextgroup)
+                        .getRankTitleColor()
+                        + ConfigManager.ranksmap.get(nextgroup)
                             .getRankTitleMale();
                     if (LPmng.playerGenreNode(player) == "female") {
-                      promotetitle = ConfigManager.ranksmap.get(playergroup)
+                      promotetitle = ConfigManager.ranksmap.get(nextgroup)
                           .getRankTitleColor()
-                          + ConfigManager.ranksmap.get(playergroup)
+                          + ConfigManager.ranksmap.get(nextgroup)
                               .getRankTitleFemale();
                     }
 
@@ -134,10 +136,10 @@ public class EventInventories implements Listener {
                         System.currentTimeMillis());
 
                     // Run pending commands synchronously
-                    if (!ConfigManager.ranksmap.get(playergroup).getCommands()
+                    if (!ConfigManager.ranksmap.get(nextgroup).getCommands()
                         .isEmpty()) {
                       ArrayList<String> commandslist = ConfigManager.ranksmap
-                          .get(playergroup).getCommands();
+                          .get(nextgroup).getCommands();
                       ArrayList<String> commands = new ArrayList<String>();
                       for (String command : commandslist) {
                         String[] splitted = command.split("%");
@@ -232,11 +234,4 @@ public class EventInventories implements Listener {
 
     }
   }
-//  Bukkit.getScheduler().runTaskAsynchronously(Veteranias.plugin,
-//      new Runnable() {
-//        @Override
-//        public void run() {
-//          
-//        }
-//  });
 }

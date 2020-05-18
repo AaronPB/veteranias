@@ -16,14 +16,12 @@ public class Inventories implements Listener {
 
   private HashMap<String, Rank> ranksmap = ConfigManager.ranksmap;
 
-  public void openInvAscenso(Player player, String currentgroup, String genre,
+  public void openInvAscenso(Player player, String nextgroup, String genre,
       Boolean hasmoney) {
 
     if (!ConfigManager.configloaded) {
       return;
     }
-
-    String nextgroup = ranksmap.get(currentgroup).getRanklpgroupascend();
 
     String totitle = ranksmap.get(nextgroup).getRankTitleMale();
     if (genre == "female") {
@@ -51,13 +49,13 @@ public class Inventories implements Listener {
     String            acceptdisplayname = "&e&l>&6&l>&e&l ACEPTAR &6&l<&e&l<";
     if (hasmoney) {
       loreaccept.add(Utils.chat("&a> &6Coste de ascenso: &e"
-          + String.valueOf(ranksmap.get(currentgroup).getRankCost())
+          + String.valueOf(ranksmap.get(nextgroup).getRankCost())
           + " dracmas."));
       loreaccept.add(Utils.chat("&a\u2714 &2Tienes el dinero necesario!"));
       loreaccept.add(Utils.chat("&7Haz click para ascender"));
     } else {
       loreaccept.add(Utils.chat("&c> &6Coste de ascenso: &e"
-          + String.valueOf(ranksmap.get(currentgroup).getRankCost())
+          + String.valueOf(ranksmap.get(nextgroup).getRankCost())
           + " dracmas."));
       loreaccept.add(Utils.chat("&c\u2718 &4No tienes suficiente dinero!"));
       acceptmaterial = Material.IRON_BLOCK;
@@ -91,7 +89,7 @@ public class Inventories implements Listener {
     }
 
     // Description item info
-    ArrayList<ItemStack> itemlist = ranksmap.get(currentgroup).getDescription();
+    ArrayList<ItemStack> itemlist = ranksmap.get(nextgroup).getDescription();
     if (!itemlist.isEmpty()) {
       int pointer = 22;
       if (itemlist.size() < 5) {

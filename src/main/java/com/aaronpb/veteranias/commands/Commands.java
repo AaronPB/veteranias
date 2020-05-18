@@ -37,18 +37,18 @@ public class Commands implements Listener, CommandExecutor {
           return true;
         }
 
+        // Because of a bug when you are sleeping u can take all the
+        // items from the generated inventory
+        if (player.isSleeping() || player.isInsideVehicle()) {
+          sender.sendMessage(Utils.userPluginTag() + Utils
+              .chat("&aPara poder ascender debes estar de pie en el suelo!!"));
+          return true;
+        }
+
         Bukkit.getScheduler().runTaskAsynchronously(Veteranias.plugin,
             new Runnable() {
               @Override
               public void run() {
-
-                // Because of a bug when you are sleeping u can take all the
-                // items from the generated inventory
-                if (player.isSleeping() || player.isInsideVehicle()) {
-                  sender.sendMessage(Utils.userPluginTag() + Utils.chat(
-                      "&aPara poder ascender debes estar de pie en el suelo!!"));
-                  return;
-                }
 
                 String playergroup = LPmng.getPlayerGroup(player);
 
@@ -62,7 +62,7 @@ public class Commands implements Listener, CommandExecutor {
                 }
 
                 if (ConfigManager.ranksmap.get(playergroup)
-                    .getRanklpgroupascend().isEmpty()) {
+                    .getRanklpgroupascend().equals("END")) {
                   sender.sendMessage(Utils.userPluginTag() + Utils.chat(
                       "&aYa has llegado a la cima de las veteranias!! Enhorabuena!"));
                   return;
@@ -86,8 +86,11 @@ public class Commands implements Listener, CommandExecutor {
                   return;
                 }
 
+                String nextgroup = ConfigManager.ranksmap.get(playergroup)
+                    .getRanklpgroupascend();
+
                 Boolean hasmoney = ECONmng.hasPlayerMoney(player,
-                    ConfigManager.ranksmap.get(playergroup).getRankCost());
+                    ConfigManager.ranksmap.get(nextgroup).getRankCost());
 
                 player.playSound(player.getLocation(),
                     Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
@@ -96,7 +99,7 @@ public class Commands implements Listener, CommandExecutor {
                     new Runnable() {
                       @Override
                       public void run() {
-                        i.openInvAscenso(player, playergroup, playergenre,
+                        i.openInvAscenso(player, nextgroup, playergenre,
                             hasmoney);
                       }
                     });
