@@ -1,7 +1,5 @@
 package com.aaronpb.veteranias;
 
-import java.util.logging.Logger;
-
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,8 +12,7 @@ import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
 
 public class Veteranias extends JavaPlugin {
-
-  private static final Logger log = Logger.getLogger("Minecraft");
+  
   public static Veteranias plugin;
   public static LuckPerms luckPerms;
   public static Economy economy;
@@ -27,32 +24,28 @@ public class Veteranias extends JavaPlugin {
   @Override
   public void onEnable() {
     plugin = this;
-    Utils.sendToServerConsole("info", "PLUGIN - &7Checking dependencies...");
+    Utils.sendToServerConsole("info", "Checking Veteranias's dependencies...");
     if (!setupLuckPerms()) {
-      log.severe(
-          String.format("[%s] - Disabled due to no LuckPerms dependency found!",
-              getDescription().getName()));
+      Utils.sendToServerConsole("error", "Disabled due to no LuckPerms dependency found!");
       getServer().getPluginManager().disablePlugin(plugin);
       return;
     }
     Utils.sendToServerConsole("info",
-        "PLUGIN - &eHoocked successfully into LuckPerms");
+        "Hoocked successfully into LuckPerms");
     if (!setupEconomy()) {
-      log.severe(
-          String.format("[%s] - Disabled due to no Vault dependency found!",
-              getDescription().getName()));
+      Utils.sendToServerConsole("error", "Disabled due to no Vault dependency found!");
       getServer().getPluginManager().disablePlugin(plugin);
       return;
     }
     Utils.sendToServerConsole("info",
-        "PLUGIN - &eHoocked successfully into Vault");
+        "Hoocked successfully into Vault");
 
     cfgm.setup();
 
     getCommand(commands.cmd1).setExecutor(commands);
     getCommand(commands.cmd2).setExecutor(commands);
 
-    Utils.sendToServerConsole("info", "PLUGIN - &aLoaded successfully!");
+    Utils.sendToServerConsole("info", "Loaded successfully!");
 
     getServer().getPluginManager().registerEvents(new EventInventories(),
         plugin);
@@ -62,7 +55,7 @@ public class Veteranias extends JavaPlugin {
   @Override
   public void onDisable() {
     Utils.sendToServerConsole("info",
-        "PLUGIN - &cLas veteranias han sido desactivadas!");
+        "The plugin Veteranias has been correctly disabled!");
     plugin = null;
   }
 

@@ -36,12 +36,10 @@ public class LuckPermsManager {
   }
 
   public boolean playerHasPermission(Player player, String permission) {
-    Utils.sendToServerConsole("debug", "LPmanager - Player para crear el user "
-        + player + ", su nombre es: " + player.getName());
     User user = lpAPI.getUserManager().getUser(player.getName());
     if (user == null) {
-      Utils.sendToServerConsole("error", "LPmanager - No existe el usuario "
-          + player.getName() + " en LuckPerms!");
+      Utils.sendToServerConsole("warn", "LPmanager - " + player.getName()
+          + " does no exist in LuckPerms! Returning false");
       return false;
     }
     return hasPermission(user, permission);
@@ -50,8 +48,8 @@ public class LuckPermsManager {
   public void addMalePermission(Player player) {
     User user = lpAPI.getUserManager().getUser(player.getName());
     if (user == null) {
-      Utils.sendToServerConsole("error", "LPmanager - No existe el usuario "
-          + player.getName() + " en LuckPerms!");
+      Utils.sendToServerConsole("warn", "LPmanager - " + player.getName()
+          + " does no exist in LuckPerms! Returning");
       return;
     }
     addPermission(user, maleperm);
@@ -60,16 +58,16 @@ public class LuckPermsManager {
   public void addFemalePermission(Player player) {
     User user = lpAPI.getUserManager().getUser(player.getName());
     if (user == null) {
-      Utils.sendToServerConsole("error", "LPmanager - No existe el usuario "
-          + player.getName() + " en LuckPerms!");
+      Utils.sendToServerConsole("warn", "LPmanager - " + player.getName()
+          + " does no exist in LuckPerms! Returning");
       return;
     }
     addPermission(user, femaleperm);
   }
 
   public boolean hasPermission(User user, String permission) {
-    Utils.sendToServerConsole("debug", "LPmanager - Comprobando el permiso "
-        + permission + " para el usuario " + user.getUsername());
+    Utils.sendToServerConsole("debug", "LPmanager - Checking permission "
+        + permission + " for " + user.getUsername());
     ContextManager      contextManager = lpAPI.getContextManager();
     ImmutableContextSet contextSet     = contextManager.getContext(user)
         .orElseGet(contextManager::getStaticContext);
@@ -77,14 +75,14 @@ public class LuckPermsManager {
     CachedPermissionData permissionData = user.getCachedData()
         .getPermissionData(QueryOptions.contextual(contextSet));
     Utils.sendToServerConsole("debug",
-        "LPmanager - " + permission + " para " + user.getUsername() + " es "
+        "LPmanager - " + permission + " for " + user.getUsername() + " is "
             + permissionData.checkPermission(permission).asBoolean());
     return permissionData.checkPermission(permission).asBoolean();
   }
 
   public void addPermission(User user, String permission) {
-    Utils.sendToServerConsole("debug", "LPmanager - Agregando permiso "
-        + permission + " para el usuario " + user.getUsername());
+    Utils.sendToServerConsole("debug", "LPmanager - Adding permission "
+        + permission + " to " + user.getUsername());
     user.data().add(Node.builder(permission).build());
     lpAPI.getUserManager().saveUser(user);
   }
@@ -93,35 +91,37 @@ public class LuckPermsManager {
 
   public String getPlayerGroup(Player player) {
     Utils.sendToServerConsole("debug",
-        "LPmanager - Se ha cargado para revisar el siguiente hashmap: "
+        "LPmanager - The next hashmap has been loaded: "
             + ConfigManager.ranksmap);
     ArrayList<String> usergroups = new ArrayList<String>();
     for (String group : ConfigManager.ranksmap.keySet()) {
-      Utils.sendToServerConsole("debug", "LPmanager - Checkeando si "
-          + player.getName() + " pertenece al grupo " + group);
+      Utils.sendToServerConsole("debug", "LPmanager - Checking if "
+          + player.getName() + " is in group " + group);
       if (player.hasPermission("group." + group)) {
         usergroups.add(group);
         Utils.sendToServerConsole("debug",
-            "LPmanager - " + player.getName() + " pertenece al grupo " + group);
+            "LPmanager - " + player.getName() + " is in group " + group);
       }
     }
-    Utils.sendToServerConsole("debug",
-        "LPmanager - " + player.getName() + " tiene esta lista de grupos: " + usergroups);
+    Utils.sendToServerConsole("debug", "LPmanager - " + player.getName()
+        + " has the following group list: " + usergroups);
     if (usergroups.isEmpty()) {
       Utils.sendToServerConsole("warn",
-          "LPmanager - No se han detectado grupos validos para "
-              + player.getName());
+          "LPmanager - There are no valid groups for " + player.getName());
       return null;
     }
-    
+
     for (String group : usergroups) {
-      Utils.sendToServerConsole("debug", "LPmanager - Revisando que el grupo " + group + " no tiene en el grupo de ascenso a: " + usergroups);
-      if(!usergroups.contains(ConfigManager.ranksmap.get(group).getRanklpgroupascend())){
+      Utils.sendToServerConsole("debug", "LPmanager - Checking if " + group
+          + " has no ascension to another group listed in: " + usergroups);
+      if (!usergroups
+          .contains(ConfigManager.ranksmap.get(group).getRanklpgroupascend())) {
         return group;
       }
     }
-    
-    Utils.sendToServerConsole("warn", "LPmanager - " + player.getName() + " no pertenece a ningun grupo valido!");
+
+    Utils.sendToServerConsole("warn",
+        "LPmanager - " + player.getName() + " is not into a valid group!");
     return null;
   }
 
@@ -129,22 +129,22 @@ public class LuckPermsManager {
     // Load user information
     User user = lpAPI.getUserManager().getUser(player.getName());
     if (user == null) {
-      Utils.sendToServerConsole("error", "LPmanager - No existe el usuario "
-          + player.getName() + " en LuckPerms!");
+      Utils.sendToServerConsole("warn", "LPmanager - " + player.getName()
+          + " does no exist in LuckPerms! Returning false");
       return false;
     }
 
     // Load info from actual player group
     String playergroupfrom = getPlayerGroup(player);
     if (playergroupfrom == null) {
-      Utils.sendToServerConsole("warn", "LPmanager - El usuario "
-          + player.getName() + " no esta en ningun grupo aceptado en config!!");
+      Utils.sendToServerConsole("warn", "LPmanager - " + player.getName()
+          + " is not in any group defined in the config file!");
       return false;
     }
     Group playeractualgroup = lpAPI.getGroupManager().getGroup(playergroupfrom);
     if (playeractualgroup == null) {
-      Utils.sendToServerConsole("error", "LPmanager - No existe el grupo "
-          + playergroupfrom + " en LuckPerms!");
+      Utils.sendToServerConsole("warn", "LPmanager - Group " + playergroupfrom
+          + " does not exist in LuckPerms!");
       return false;
     }
 
@@ -153,13 +153,13 @@ public class LuckPermsManager {
         .getRanklpgroupascend();
     if (playergroupto == null) {
       Utils.sendToServerConsole("warn",
-          "LPmanager - " + playergroupto + " no tiene una promocion valida!!");
+          "LPmanager - " + playergroupto + " has no valid promotion!");
       return false;
     }
     Group playerpromotegroup = lpAPI.getGroupManager().getGroup(playergroupto);
     if (playerpromotegroup == null) {
-      Utils.sendToServerConsole("error",
-          "LPmanager - No existe el grupo " + playergroupto + " en LuckPerms!");
+      Utils.sendToServerConsole("error", "LPmanager - The group "
+          + playergroupto + " does not exist in LuckPerms!");
       return false;
     }
 
@@ -169,12 +169,12 @@ public class LuckPermsManager {
         .build();
 
     user.data().add(newnode);
-    Utils.sendToServerConsole("info", "LPmanager - Se ha agregado a &3"
-        + player.getName() + "&f al grupo &3" + playergroupto);
+    Utils.sendToServerConsole("info", "LPmanager - " + player.getName()
+        + " has been added to " + playergroupto);
 
     user.data().remove(oldnode);
-    Utils.sendToServerConsole("info", "LPmanager - Se ha eliminado a &3"
-        + player.getName() + "&f del grupo &3" + playergroupfrom);
+    Utils.sendToServerConsole("info", "LPmanager - " + player.getName()
+        + " has been removed from " + playergroupto);
 
     lpAPI.getUserManager().saveUser(user);
 

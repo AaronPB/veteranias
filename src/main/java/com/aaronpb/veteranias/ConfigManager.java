@@ -39,10 +39,10 @@ public class ConfigManager {
       Veteranias.plugin.getConfig().options().copyDefaults(true);
       Veteranias.plugin.saveDefaultConfig();
       Utils.sendToServerConsole("info",
-          "CONFIG - &aSe ha generado el archivo config.yml correctamente.");
+          "The config file has been correctly generated!");
     } else {
       Utils.sendToServerConsole("info",
-          "CONFIG - &aNo ha sido necesario generarlo, ya existe.");
+          "The config file has been detected. No need to generate it.");
     }
     try {
       loadConfigParams();
@@ -50,7 +50,8 @@ public class ConfigManager {
       configloaded = true;
     } catch (NullPointerException e) {
       Utils.sendToServerConsole("error",
-          "Could not read all the config params correctly. Correct mistakes in file and reload again!!");
+          "Could not read all the config params correctly."
+              + " Correct mistakes in file and reload again!!");
     }
   }
 
@@ -62,19 +63,20 @@ public class ConfigManager {
       config.options().copyDefaults(true);
       Veteranias.plugin.saveDefaultConfig();
       Utils.sendToServerConsole("warn",
-          "CONFIG - No se ha detectado archivo config.yml en la carpeta veteranias. Se ha generado el archivo por defecto!");
+          "The config file does not exist intro de plugin folder."
+              + " It has been generated again with default params!");
     }
     try {
       loadConfigParams();
       Utils.sendToServerConsole("info",
-          "CONFIG - &aSe ha guardado la configuracion correctamente!");
+          "The config has been reloaded correctly!");
       ranksmap = preloadranksmap;
-      Utils.sendToServerConsole("debug",
-          "CONFIG - Nuevo hasmap cargado: " + ranksmap);
+      Utils.sendToServerConsole("debug", "New hashmap loaded: " + ranksmap);
       configloaded = true;
     } catch (NullPointerException e) {
       Utils.sendToServerConsole("error",
-          "Could not read all the config params correctly. Correct mistakes in file and reload again!!");
+          "Could not read all the config params correctly."
+              + " Correct mistakes in file and reload again!!");
     }
   }
 
@@ -130,10 +132,9 @@ public class ConfigManager {
         }
 
       }
-      
+
       if (config.isSet("ascensionlist." + rank + ".commands")) {
-        Utils.sendToServerConsole("debug",
-            " Checking command list of " + rank);
+        Utils.sendToServerConsole("debug", " Checking command list of " + rank);
         for (String command : config
             .getStringList("ascensionlist." + rank + ".commands")) {
           setRank.addCommands(command);
@@ -143,68 +144,65 @@ public class ConfigManager {
       }
 
       preloadranksmap.put(setRank.getRanklpgroup(), setRank);
-      Utils.sendToServerConsole("info", "&a[" + rank + "] correctly loaded.");
+      Utils.sendToServerConsole("info", "[" + rank + "] correctly loaded.");
     }
-    Utils.sendToServerConsole("debug", "CONFIG - Hashmap: " + preloadranksmap);
+    Utils.sendToServerConsole("debug", "Preloaded hashmap: " + preloadranksmap);
   }
 
   private void loadGeneralParams() {
-    Utils.sendToServerConsole("info", "CONFIG - Loading config params...");
+    Utils.sendToServerConsole("info", "Loading config params...");
     if (config.isSet("DebugMode")) {
       debugmode = config.getBoolean("DebugMode");
-      Utils.sendToServerConsole("info",
-          "CONFIG - &a[DebugMode] set to " + debugmode);
+      Utils.sendToServerConsole("info", "[DebugMode] set to " + debugmode);
     } else {
       levitation = false;
       Utils.sendToServerConsole("warn",
-          "CONFIG - [DebugMode] Not found in config. Setting to false");
+          "[DebugMode] Not found in config. Setting to false");
     }
     if (config.isSet("levitation_effect")) {
       levitation = config.getBoolean("levitation_effect");
       Utils.sendToServerConsole("info",
-          "CONFIG - &a[levitation_effect] set to " + levitation);
+          "[levitation_effect] set to " + levitation);
     } else {
       levitation = false;
       Utils.sendToServerConsole("warn",
-          "CONFIG - [levitation_effect] Not found in config. Setting to false");
+          "[levitation_effect] Not found in config. Setting to false");
     }
     if (config.isSet("levitation_duration")) {
       levitation_time = config.getInt("levitation_duration");
       Utils.sendToServerConsole("info",
-          "CONFIG - &a[levitation_duration] set to " + levitation_time);
+          "[levitation_duration] set to " + levitation_time);
     } else {
       levitation_time = 0;
       Utils.sendToServerConsole("warn",
-          "CONFIG - [levitation_duration] Not found in config. Setting to 0 seconds");
+          "[levitation_duration] Not found in config. Setting to 0 seconds");
     }
     if (config.isSet("setcooldown")) {
       cooldown = config.getBoolean("setcooldown");
-      Utils.sendToServerConsole("info",
-          "CONFIG - &a[cooldown] set to " + cooldown);
+      Utils.sendToServerConsole("info", "[cooldown] set to " + cooldown);
     } else {
       cooldown = true;
       Utils.sendToServerConsole("warn",
-          "CONFIG - [cooldown] Not found in config. Setting to true");
+          "[cooldown] Not found in config. Setting to true");
     }
     if (config.isSet("cooldowntime")) {
       cooldown_time = config.getInt("cooldowntime");
       Utils.sendToServerConsole("info",
-          "CONFIG - &a[cooldown_duration] set to " + cooldown_time);
+          "[cooldown_duration] set to " + cooldown_time);
     } else {
       cooldown_time = 30;
       Utils.sendToServerConsole("warn",
-          "CONFIG - [cooldown_duration] Not found in config. Setting to 30 seconds");
+          "[cooldown_duration] Not found in config. Setting to 30 seconds");
     }
     if (config.isSet("titleformatpre") && config.isSet("titleformatpost")) {
       prebracket = config.getString("titleformatpre");
       postbracket = config.getString("titleformatpost");
-      Utils.sendToServerConsole("info",
-          "CONFIG - &a[rank brackets] correctly set!");
+      Utils.sendToServerConsole("info", "[rank brackets] correctly set!");
     } else {
       prebracket = "&7[";
       postbracket = "&7]&r";
       Utils.sendToServerConsole("warn",
-          "CONFIG - [rank brackets] Not found in config. Setting to default []");
+          "[rank brackets] Not found in config. Setting to default []");
     }
   }
 

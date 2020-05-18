@@ -55,8 +55,8 @@ public class Commands implements Listener, CommandExecutor {
                 if (playergroup == null) {
                   sender.sendMessage(Utils.userPluginTag() + Utils.chat(
                       "&cNo perteneces a un rango valido de veteranias para poder ascender. Consulta este problema con kalhon89!"));
-                  Utils.sendToServerConsole("error", player.getName()
-                      + " ha intentado ascender sin pertenecer a un grupo valido registrado en config: "
+                  Utils.sendToServerConsole("warn", player.getName()
+                      + " tried to ascend without being into a valid group defined in config: "
                       + playergroup);
                   return;
                 }
@@ -75,7 +75,7 @@ public class Commands implements Listener, CommandExecutor {
                   sender.sendMessage(Utils.userPluginTag()
                       + Utils.chat("&aAntes debes seleccionar un genero!"));
                   Utils.sendToServerConsole("warn", player.getName()
-                      + " ha intentado ascender sin estar incluido en uno de los generos! Se ha abierto el inventario de seleccion.");
+                      + " tried to ascend without a valid genre! Opening genre inventory selection.");
                   Bukkit.getScheduler().runTask(Veteranias.plugin,
                       new Runnable() {
                         @Override
@@ -91,12 +91,13 @@ public class Commands implements Listener, CommandExecutor {
 
                 player.playSound(player.getLocation(),
                     Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
-                
+
                 Bukkit.getScheduler().runTask(Veteranias.plugin,
                     new Runnable() {
                       @Override
                       public void run() {
-                        i.openInvAscenso(player, playergroup, playergenre, hasmoney);
+                        i.openInvAscenso(player, playergroup, playergenre,
+                            hasmoney);
                       }
                     });
               }
