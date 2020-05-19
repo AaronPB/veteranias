@@ -103,13 +103,13 @@ public class LuckPermsManager {
             "LPmanager - " + player.getName() + " is in group " + group);
       }
     }
-    Utils.sendToServerConsole("debug", "LPmanager - " + player.getName()
-        + " has the following group list: " + usergroups);
     if (usergroups.isEmpty()) {
       Utils.sendToServerConsole("warn",
           "LPmanager - There are no valid groups for " + player.getName());
       return null;
     }
+    Utils.sendToServerConsole("debug", "LPmanager - " + player.getName()
+    + " has the following group list: " + usergroups);
 
     for (String group : usergroups) {
       Utils.sendToServerConsole("debug", "LPmanager - Checking if " + group

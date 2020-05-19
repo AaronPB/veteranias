@@ -8,9 +8,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -36,16 +40,20 @@ public class EventInventories implements Listener {
     Inventory open = event.getClickedInventory();
     ItemStack item = event.getCurrentItem();
 
-    Bukkit.getScheduler().isCurrentlyRunning(0);
-
     if (open == null) {
       return;
     }
-    if (open.getSize() == 45 && (open.getItem(4).getItemMeta().getDisplayName()
-        .equals(Utils.chat("&e&l>&6&l>&e&l ACEPTAR &6&l<&e&l<"))
-        || open.getItem(4).getItemMeta().getDisplayName()
-            .equals(Utils.chat("&7&l>&8&l>&7&l ACEPTAR &8&l<&7&l<")))) {
+    if (VeteraniasAscendInventory(open)) {
+
+      if (IllegalAction(event.getAction())) {
+        Utils.sendToServerConsole("debug",
+            "Illegal inventory action from " + player.getName());
+        event.setCancelled(true);
+        event.setResult(Result.DENY);
+        return;
+      }
       event.setCancelled(true);
+      event.setResult(Result.DENY);
 
       if (!ConfigManager.configloaded) {
         player.closeInventory();
@@ -55,6 +63,14 @@ public class EventInventories implements Listener {
       }
 
       if (item == null || !item.hasItemMeta()) {
+        return;
+      }
+
+      if (event.getCursor() == null) {
+        return;
+      }
+
+      if (event.getSlotType() == SlotType.QUICKBAR) {
         return;
       }
 
@@ -194,9 +210,17 @@ public class EventInventories implements Listener {
         return;
       }
     }
-    if (open.getSize() == 18 && open.getItem(1).getItemMeta().getDisplayName()
-        .equals(Utils.chat("&3&l         Soy un chico"))) {
+    if (VeteraniasGenreInventory(open)) {
+
+      if (IllegalAction(event.getAction())) {
+        Utils.sendToServerConsole("debug",
+            "Illegal inventory action from " + player.getName());
+        event.setCancelled(true);
+        event.setResult(Result.DENY);
+        return;
+      }
       event.setCancelled(true);
+      event.setResult(Result.DENY);
 
       if (!ConfigManager.configloaded) {
         player.closeInventory();
@@ -206,6 +230,14 @@ public class EventInventories implements Listener {
       }
 
       if (item == null || !item.hasItemMeta()) {
+        return;
+      }
+
+      if (event.getCursor() == null) {
+        return;
+      }
+
+      if (event.getSlotType() == SlotType.QUICKBAR) {
         return;
       }
 
@@ -241,5 +273,63 @@ public class EventInventories implements Listener {
       return;
 
     }
+  }
+  
+  @EventHandler
+  public void DragItems(InventoryDragEvent event) {
+    Inventory inventory = event.getInventory();
+    Utils.sendToServerConsole("debug", "Drag movement detected! Checking inventory " + inventory);
+    if(VeteraniasAscendInventory(inventory) || VeteraniasGenreInventory(inventory)) {
+      Utils.sendToServerConsole("debug", "Cancelling drag movement");
+      event.setCancelled(true);
+      event.setResult(Result.DENY);
+    }
+  }
+
+  private boolean VeteraniasAscendInventory(Inventory inventory) {
+    if (inventory.getSize() != 45) {
+      return false;
+    }
+    if (!inventory.getItem(4).getItemMeta().getDisplayName()
+        .equals(Utils.chat("&e&l>&6&l>&e&l ACEPTAR &6&l<&e&l<"))
+        && !inventory.getItem(4).getItemMeta().getDisplayName()
+            .equals(Utils.chat("&7&l>&8&l>&7&l ACEPTAR &8&l<&7&l<"))) {
+      return false;
+    }
+    return true;
+  }
+
+  private boolean VeteraniasGenreInventory(Inventory inventory) {
+    if (inventory.getSize() != 18) {
+      return false;
+    }
+    if (!inventory.getItem(1).getItemMeta().getDisplayName()
+        .equals(Utils.chat("&3&l         Soy un chico"))) {
+      return false;
+    }
+    return true;
+  }
+
+  private boolean IllegalAction(InventoryAction action) {
+    Utils.sendToServerConsole("debug", "Checking action: " + action);
+    switch (action) {
+      case CLONE_STACK:
+      case DROP_ALL_SLOT:
+      case DROP_ONE_SLOT:
+      case HOTBAR_MOVE_AND_READD:
+      case HOTBAR_SWAP:
+      case PICKUP_HALF:
+      case PICKUP_SOME:
+      case PICKUP_ONE:
+      case MOVE_TO_OTHER_INVENTORY:
+      case PLACE_ALL:
+      case PLACE_ONE:
+      case PLACE_SOME:
+      case SWAP_WITH_CURSOR:
+        return true;
+      default:
+        break;
+    }
+    return false;
   }
 }
