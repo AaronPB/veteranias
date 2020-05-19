@@ -73,7 +73,6 @@ public class EventInventories implements Listener {
 
                 if (ECONmng.hasPlayerMoney(player,
                     ConfigManager.ranksmap.get(nextgroup).getRankCost())) {
-                  Boolean playercooldown = false;
 
                   if (cooldown.containsKey(player.getUniqueId())) {
                     Utils.sendToServerConsole("debug",
@@ -86,93 +85,101 @@ public class EventInventories implements Listener {
                       player.sendMessage(Utils.userPluginTag()
                           + Utils.chat("&cDebes esperar " + secondsleft
                               + " segundos para poder volver a ascender!"));
-                      playercooldown = true;
+                      return;
                     } else {
                       cooldown.remove(player.getUniqueId());
                     }
                   }
-                  if (!playercooldown) {
 
-                    // Upgrade process and effects
-                    ECONmng.takePlayerMoney(player,
-                        ConfigManager.ranksmap.get(nextgroup).getRankCost());
-                    LPmng.promotePlayer(player);
-                    player.playSound(player.getLocation(),
-                        Sound.UI_TOAST_CHALLENGE_COMPLETE, 1, 1);
-                    if (ConfigManager.levitation) {
-                      Utils.sendToServerConsole("debug",
-                          "ASCENDACTION - Applying levitation effect...");
-                      Bukkit.getScheduler().runTask(Veteranias.plugin,
-                          new Runnable() {
-                            @Override
-                            public void run() {
-                              player.addPotionEffect(
-                                  new PotionEffect(PotionEffectType.LEVITATION,
-                                      ConfigManager.levitation_time * 20, 1));
-                            }
-                          });
-                    }
-
-                    String promotetitle = ConfigManager.ranksmap.get(nextgroup)
-                        .getRankTitleColor()
-                        + ConfigManager.ranksmap.get(nextgroup)
-                            .getRankTitleMale();
-                    if (LPmng.playerGenreNode(player) == "female") {
-                      promotetitle = ConfigManager.ranksmap.get(nextgroup)
-                          .getRankTitleColor()
-                          + ConfigManager.ranksmap.get(nextgroup)
-                              .getRankTitleFemale();
-                    }
-
-                    player.sendTitle(
-                        Utils.chat("&aAscendiste a " + promotetitle),
-                        Utils.chat(
-                            "&fSe han aplicado las mejoras de tu ascenso!"),
-                        10, 80, 50);
-                    Bukkit.broadcastMessage(Utils.userPluginTag()
-                        + Utils.chat("&6" + player.getName()
-                            + "&d ha ascendido a " + promotetitle + "&d!"));
-                    cooldown.put(player.getUniqueId(),
-                        System.currentTimeMillis());
-
-                    // Run pending commands synchronously
-                    if (!ConfigManager.ranksmap.get(nextgroup).getCommands()
-                        .isEmpty()) {
-                      ArrayList<String> commandslist = ConfigManager.ranksmap
-                          .get(nextgroup).getCommands();
-                      ArrayList<String> commands = new ArrayList<String>();
-                      for (String command : commandslist) {
-                        String[] splitted = command.split("%");
-                        String assembly = "";
-                        for (String part : splitted) {
-                          if (part.equals("player")) {
-                            part = player.getName();
-                          }
-                          assembly = assembly + part;
-                        }
-                        Utils.sendToServerConsole("debug",
-                            "Loaded command: " + assembly);
-                        commands.add(assembly);
-                      }
-                      Bukkit.getScheduler().runTask(Veteranias.plugin,
-                          new Runnable() {
-                            @Override
-                            public void run() {
-                              for (String command : commands) {
-                                Utils.sendToServerConsole("debug",
-                                    " Ascension command for " + player.getName()
-                                        + ": " + command);
-                                Bukkit.getServer().dispatchCommand(
-                                    Bukkit.getConsoleSender(), command);
-                              }
-                            }
-                          });
-                    }
-
+                  // Upgrade process and effects
+                  boolean moneytaken = ECONmng.takePlayerMoney(player,
+                      ConfigManager.ranksmap.get(nextgroup).getRankCost());
+                  boolean playerpromoted = LPmng.promotePlayer(player);
+                  if (!moneytaken) {
+                    player.sendMessage(Utils.userPluginTag() + Utils.chat(
+                        "&cNo tienes suficientes dracmas para ascender!!"));
                   }
-                } else {
-                  player.sendMessage(Utils.userPluginTag() + Utils
-                      .chat("&cNo tienes suficientes dracmas para ascender!!"));
+                  if (!playerpromoted) {
+                    player.sendMessage(Utils.userPluginTag() + Utils.chat(
+                        "&cNo hay una veterania valida para ascender!! Consulta este problema con kalhon89."));
+                    return;
+                  }
+                  player.playSound(player.getLocation(),
+                      Sound.UI_TOAST_CHALLENGE_COMPLETE, 1, 1);
+                  if (ConfigManager.levitation) {
+                    Utils.sendToServerConsole("debug",
+                        "ASCENDACTION - Applying levitation effect...");
+                    Bukkit.getScheduler().runTask(Veteranias.plugin,
+                        new Runnable() {
+                          @Override
+                          public void run() {
+                            player.addPotionEffect(
+                                new PotionEffect(PotionEffectType.LEVITATION,
+                                    ConfigManager.levitation_time * 20, 1));
+                          }
+                        });
+                  }
+
+                  String promotetitle = ConfigManager.ranksmap.get(nextgroup)
+                      .getRankTitleMale();
+                  String article  = "un";
+                  if (LPmng.playerGenreNode(player) == "female") {
+                    promotetitle = ConfigManager.ranksmap.get(nextgroup)
+                        .getRankTitleFemale();
+                    article = "una";
+                  }
+
+                  String thickpromotetile = ConfigManager.ranksmap
+                      .get(nextgroup).getRankTitleColor() + "&l" + promotetitle;
+
+                  promotetitle = ConfigManager.ranksmap.get(nextgroup)
+                      .getRankTitleColor() + promotetitle;
+
+                  player.sendTitle(Utils.chat("&aAscendiste a " + promotetitle),
+                      Utils
+                          .chat("&fSe han aplicado las mejoras de tu ascenso!"),
+                      10, 80, 50);
+                  Bukkit.broadcastMessage(Utils.userPluginTag()
+                      + Utils.chat("&6&l" + player.getName()
+                          + "&3 ha ascendido!! &6GG\n&a&l>>&f Ahora es "
+                          + article + " " + thickpromotetile));
+                  cooldown.put(player.getUniqueId(),
+                      System.currentTimeMillis());
+
+                  // Run pending commands synchronously
+                  if (!ConfigManager.ranksmap.get(nextgroup).getCommands()
+                      .isEmpty()) {
+                    ArrayList<String> commandslist = ConfigManager.ranksmap
+                        .get(nextgroup).getCommands();
+                    ArrayList<String> commands = new ArrayList<String>();
+                    for (String command : commandslist) {
+                      String[] splitted = command.split("%");
+                      String assembly = "";
+                      for (String part : splitted) {
+                        if (part.equals("player")) {
+                          part = player.getName();
+                        }
+                        assembly = assembly + part;
+                      }
+                      Utils.sendToServerConsole("debug",
+                          "Loaded command: " + assembly);
+                      commands.add(assembly);
+                    }
+                    Bukkit.getScheduler().runTask(Veteranias.plugin,
+                        new Runnable() {
+                          @Override
+                          public void run() {
+                            for (String command : commands) {
+                              Utils.sendToServerConsole("debug",
+                                  " Ascension command for " + player.getName()
+                                      + ": " + command);
+                              Bukkit.getServer().dispatchCommand(
+                                  Bukkit.getConsoleSender(), command);
+                            }
+                          }
+                        });
+                  }
+
                 }
               }
             });
@@ -206,6 +213,7 @@ public class EventInventories implements Listener {
 
       Bukkit.getScheduler().runTaskAsynchronously(Veteranias.plugin,
           new Runnable() {
+
             @Override
             public void run() {
               if (item.getType().equals(Material.CYAN_CONCRETE)) {
