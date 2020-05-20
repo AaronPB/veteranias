@@ -13,7 +13,9 @@ commands:
     aliases:
     - rankup
     usage: /<command>
-    description: Command to ascend to the next veterania
+    description: Command to promote to the next veterania
+    permission: veteranias.ascend
+    permission-message: No tienes permisos para ejecutar este comando aqui!
   vetreload:
     usage: /<command>
     description: Command for save and rewrite config params
@@ -21,6 +23,9 @@ commands:
     permission-message: No tienes permisos para ejecutar este comando.
 
 permissions:
+  veteranias.ascend:
+    description: Needed to use the /rankup command.
+    default: op
   veteranias.admin:
     description: Needed to use administrator commands such as config reload.
     default: op
