@@ -333,7 +333,7 @@ public class EventInventories implements Listener {
       default:
         break;
     }
-    Utils.sendToServerConsole("debug", "Nothing legal");
+    Utils.sendToServerConsole("debug", "Nothing ilegal detected");
     return false;
   }
 }
