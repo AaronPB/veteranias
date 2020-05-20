@@ -11,9 +11,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -37,15 +37,16 @@ public class EventInventories implements Listener {
   public void InventoryClick(InventoryClickEvent event) {
     Player player = (Player) event.getWhoClicked();
 
-    Inventory open = event.getClickedInventory();
+    Inventory open = event.getInventory();
     ItemStack item = event.getCurrentItem();
 
     if (open == null) {
       return;
     }
+    
     if (VeteraniasAscendInventory(open)) {
 
-      if (IllegalAction(event.getAction())) {
+      if (IllegalAction(event.getAction(), event.getClick())) {
         Utils.sendToServerConsole("debug",
             "Illegal inventory action from " + player.getName());
         event.setCancelled(true);
@@ -212,7 +213,7 @@ public class EventInventories implements Listener {
     }
     if (VeteraniasGenreInventory(open)) {
 
-      if (IllegalAction(event.getAction())) {
+      if (IllegalAction(event.getAction(), event.getClick())) {
         Utils.sendToServerConsole("debug",
             "Illegal inventory action from " + player.getName());
         event.setCancelled(true);
@@ -274,17 +275,6 @@ public class EventInventories implements Listener {
 
     }
   }
-  
-  @EventHandler
-  public void DragItems(InventoryDragEvent event) {
-    Inventory inventory = event.getInventory();
-    Utils.sendToServerConsole("debug", "Drag movement detected! Checking inventory " + inventory);
-    if(VeteraniasAscendInventory(inventory) || VeteraniasGenreInventory(inventory)) {
-      Utils.sendToServerConsole("debug", "Cancelling drag movement");
-      event.setCancelled(true);
-      event.setResult(Result.DENY);
-    }
-  }
 
   private boolean VeteraniasAscendInventory(Inventory inventory) {
     if (inventory.getSize() != 45) {
@@ -310,8 +300,8 @@ public class EventInventories implements Listener {
     return true;
   }
 
-  private boolean IllegalAction(InventoryAction action) {
-    Utils.sendToServerConsole("debug", "Checking action: " + action);
+  private boolean IllegalAction(InventoryAction action, ClickType click) {
+    Utils.sendToServerConsole("debug", "Checking action: " + action + "," + click);
     switch (action) {
       case CLONE_STACK:
       case DROP_ALL_SLOT:
@@ -326,10 +316,24 @@ public class EventInventories implements Listener {
       case PLACE_ONE:
       case PLACE_SOME:
       case SWAP_WITH_CURSOR:
+        Utils.sendToServerConsole("debug", "It is an illegal action!");
         return true;
       default:
         break;
     }
+    switch(click) {
+      case SHIFT_LEFT:
+      case SHIFT_RIGHT:
+      case DOUBLE_CLICK:
+      case MIDDLE:
+      case RIGHT:
+        Utils.sendToServerConsole("debug", "It is an illegal click!");
+        return true;
+      case LEFT:
+      default:
+        break;
+    }
+    Utils.sendToServerConsole("debug", "Nothing legal");
     return false;
   }
 }

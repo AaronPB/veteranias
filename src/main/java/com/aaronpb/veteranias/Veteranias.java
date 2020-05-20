@@ -1,6 +1,8 @@
 package com.aaronpb.veteranias;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -54,6 +56,8 @@ public class Veteranias extends JavaPlugin {
   // Disable plugin
   @Override
   public void onDisable() {
+    ConfigManager.configloaded = false;
+    closePlayerInvs();
     Utils.sendToServerConsole("info",
         "The plugin Veteranias has been correctly disabled!");
     plugin = null;
@@ -85,6 +89,44 @@ public class Veteranias extends JavaPlugin {
     }
     economy = vaultProvider.getProvider();
     return economy != null;
+  }
+  
+  private void closePlayerInvs() {
+    for(Player p : Bukkit.getOnlinePlayers()){
+      if(p.getOpenInventory() != null){
+        if(p.getOpenInventory().getTopInventory()!=null){
+          Inventory pinv = p.getOpenInventory().getTopInventory();
+          if(VeteraniasAscendInventory(pinv) || VeteraniasGenreInventory(pinv)){
+            Utils.sendToServerConsole("info", "Inventory closer: Closing inventory for " +  p.getName());
+            p.closeInventory();
+          }
+        }
+      }
+    }
+  }
+  
+  private boolean VeteraniasAscendInventory(Inventory inventory) {
+    if (inventory.getSize() != 45) {
+      return false;
+    }
+    if (!inventory.getItem(4).getItemMeta().getDisplayName()
+        .equals(Utils.chat("&e&l>&6&l>&e&l ACEPTAR &6&l<&e&l<"))
+        && !inventory.getItem(4).getItemMeta().getDisplayName()
+            .equals(Utils.chat("&7&l>&8&l>&7&l ACEPTAR &8&l<&7&l<"))) {
+      return false;
+    }
+    return true;
+  }
+
+  private boolean VeteraniasGenreInventory(Inventory inventory) {
+    if (inventory.getSize() != 18) {
+      return false;
+    }
+    if (!inventory.getItem(1).getItemMeta().getDisplayName()
+        .equals(Utils.chat("&3&l         Soy un chico"))) {
+      return false;
+    }
+    return true;
   }
 
 }
