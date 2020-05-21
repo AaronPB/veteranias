@@ -80,7 +80,7 @@ public class LuckPermsManager {
     return permissionData.checkPermission(permission).asBoolean();
   }
 
-  public void addPermission(User user, String permission) {
+  private void addPermission(User user, String permission) {
     Utils.sendToServerConsole("debug", "LPmanager - Adding permission "
         + permission + " to " + user.getUsername());
     user.data().add(Node.builder(permission).build());
@@ -125,7 +125,7 @@ public class LuckPermsManager {
     return null;
   }
 
-  public boolean promotePlayer(Player player) {
+  public boolean promotePlayer(Player player, String playergroupfrom) {
     // Load user information
     User user = lpAPI.getUserManager().getUser(player.getName());
     if (user == null) {
@@ -135,12 +135,6 @@ public class LuckPermsManager {
     }
 
     // Load info from actual player group
-    String playergroupfrom = getPlayerGroup(player);
-    if (playergroupfrom == null) {
-      Utils.sendToServerConsole("warn", "LPmanager - " + player.getName()
-          + " is not in any group defined in the config file!");
-      return false;
-    }
     Group playeractualgroup = lpAPI.getGroupManager().getGroup(playergroupfrom);
     if (playeractualgroup == null) {
       Utils.sendToServerConsole("warn", "LPmanager - Group " + playergroupfrom
