@@ -6,21 +6,25 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.aaronpb.veteranias.commands.Commands;
+import com.aaronpb.veteranias.commands.AdminCommands;
+import com.aaronpb.veteranias.commands.PromoteCommands;
 import com.aaronpb.veteranias.events.EventInventories;
+import com.aaronpb.veteranias.listeners.VeteraniasInventories;
 import com.aaronpb.veteranias.utils.Utils;
 
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
 
 public class Veteranias extends JavaPlugin {
-  
+
   public static Veteranias plugin;
   public static LuckPerms luckPerms;
   public static Economy economy;
 
   private ConfigManager cfgm = new ConfigManager();
-  private Commands commands = new Commands();
+  private VeteraniasInventories vetinvs = new VeteraniasInventories();
+  private AdminCommands admincommands = new AdminCommands();
+  private PromoteCommands promotecommands = new PromoteCommands();
 
   // Initiate plugin
   @Override
@@ -28,24 +32,25 @@ public class Veteranias extends JavaPlugin {
     plugin = this;
     Utils.sendToServerConsole("info", "Checking Veteranias's dependencies...");
     if (!setupLuckPerms()) {
-      Utils.sendToServerConsole("error", "Disabled due to no LuckPerms dependency found!");
+      Utils.sendToServerConsole("error",
+          "Disabled due to no LuckPerms dependency found!");
       getServer().getPluginManager().disablePlugin(plugin);
       return;
     }
-    Utils.sendToServerConsole("info",
-        "Hoocked successfully into LuckPerms");
+    Utils.sendToServerConsole("info", "Hoocked successfully into LuckPerms");
     if (!setupEconomy()) {
-      Utils.sendToServerConsole("error", "Disabled due to no Vault dependency found!");
+      Utils.sendToServerConsole("error",
+          "Disabled due to no Vault dependency found!");
       getServer().getPluginManager().disablePlugin(plugin);
       return;
     }
-    Utils.sendToServerConsole("info",
-        "Hoocked successfully into Vault");
+    Utils.sendToServerConsole("info", "Hoocked successfully into Vault");
 
     cfgm.setup();
 
-    getCommand(commands.cmd1).setExecutor(commands);
-    getCommand(commands.cmd2).setExecutor(commands);
+    getCommand(admincommands.adminreload_cmd).setExecutor(admincommands);
+//    getCommand(admincommands.adminchangegenre_cmd).setExecutor(admincommands);
+    getCommand(promotecommands.promotecmd).setExecutor(promotecommands);
 
     Utils.sendToServerConsole("info", "Loaded successfully!");
 
@@ -90,43 +95,20 @@ public class Veteranias extends JavaPlugin {
     economy = vaultProvider.getProvider();
     return economy != null;
   }
-  
+
   private void closePlayerInvs() {
-    for(Player p : Bukkit.getOnlinePlayers()){
-      if(p.getOpenInventory() != null){
-        if(p.getOpenInventory().getTopInventory()!=null){
+    for (Player p : Bukkit.getOnlinePlayers()) {
+      if (p.getOpenInventory() != null) {
+        if (p.getOpenInventory().getTopInventory() != null) {
           Inventory pinv = p.getOpenInventory().getTopInventory();
-          if(VeteraniasAscendInventory(pinv) || VeteraniasGenreInventory(pinv)){
-            Utils.sendToServerConsole("info", "Inventory closer: Closing inventory for " +  p.getName());
+          if (vetinvs.isPromoteInv(pinv) || vetinvs.isGenreInv(pinv)) {
+            Utils.sendToServerConsole("info",
+                "Inventory closer: Closing inventory for " + p.getName());
             p.closeInventory();
           }
         }
       }
     }
-  }
-  
-  private boolean VeteraniasAscendInventory(Inventory inventory) {
-    if (inventory.getSize() != 45) {
-      return false;
-    }
-    if (!inventory.getItem(4).getItemMeta().getDisplayName()
-        .equals(Utils.chat("&e&l>&6&l>&e&l ACEPTAR &6&l<&e&l<"))
-        && !inventory.getItem(4).getItemMeta().getDisplayName()
-            .equals(Utils.chat("&7&l>&8&l>&7&l ACEPTAR &8&l<&7&l<"))) {
-      return false;
-    }
-    return true;
-  }
-
-  private boolean VeteraniasGenreInventory(Inventory inventory) {
-    if (inventory.getSize() != 18) {
-      return false;
-    }
-    if (!inventory.getItem(1).getItemMeta().getDisplayName()
-        .equals(Utils.chat("&3&l         Soy un chico"))) {
-      return false;
-    }
-    return true;
   }
 
 }

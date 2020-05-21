@@ -1,22 +1,110 @@
-package com.aaronpb.veteranias;
+package com.aaronpb.veteranias.listeners;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.aaronpb.veteranias.ConfigManager;
+import com.aaronpb.veteranias.LuckPermsManager;
+import com.aaronpb.veteranias.Rank;
+import com.aaronpb.veteranias.VaultManager;
+import com.aaronpb.veteranias.Veteranias;
 import com.aaronpb.veteranias.utils.Utils;
 
-public class Inventories implements Listener {
+public class VeteraniasInventories implements Listener {
 
+  private LuckPermsManager LPmng = new LuckPermsManager();
+  private VaultManager ECONmng = new VaultManager();
   private HashMap<String, Rank> ranksmap = ConfigManager.ranksmap;
 
-  public void openInvAscenso(Player player, String nextgroup, String genre,
+  public void openPromoteInv(Player player) {
+
+    String playergroup = LPmng.getPlayerGroup(player);
+
+    if (playergroup == null) {
+      player.sendMessage(Utils.userPluginTag() + Utils.chat(
+          "&cNo perteneces a un rango valido de veteranias para poder ascender. Consulta este problema con kalhon89!"));
+      Utils.sendToServerConsole("warn", player.getName()
+          + " tried to ascend without being into a valid group defined in config: "
+          + playergroup);
+      return;
+    }
+
+    if (ConfigManager.ranksmap.get(playergroup).getRanklpgroupascend()
+        .equals("END")) {
+      player.sendMessage(Utils.userPluginTag() + Utils
+          .chat("&aYa has llegado a la cima de las veteranias!! Enhorabuena!"));
+      return;
+    }
+
+    String playergenre = LPmng.playerGenreNode(player);
+    if (playergenre == null) {
+      player.sendMessage(Utils.userPluginTag()
+          + Utils.chat("&aAntes debes seleccionar un genero!"));
+      Utils.sendToServerConsole("warn", player.getName()
+          + " tried to ascend without a valid genre! Opening genre inventory selection.");
+      openGenreInv(player);
+      return;
+    }
+
+    String nextgroup = ConfigManager.ranksmap.get(playergroup)
+        .getRanklpgroupascend();
+
+    Boolean hasmoney = ECONmng.hasPlayerMoney(player,
+        ConfigManager.ranksmap.get(nextgroup).getRankCost());
+
+    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+
+    Bukkit.getScheduler().runTask(Veteranias.plugin, new Runnable() {
+      @Override
+      public void run() {
+        promoteInv(player, nextgroup, playergenre, hasmoney);
+      }
+    });
+  }
+
+  public void openGenreInv(Player player) {
+    Bukkit.getScheduler().runTask(Veteranias.plugin, new Runnable() {
+      @Override
+      public void run() {
+        genreInv(player);
+      }
+    });
+  }
+
+  public boolean isPromoteInv(Inventory inventory) {
+    if (inventory.getSize() != 45) {
+      return false;
+    }
+    if (!inventory.getItem(4).getItemMeta().getDisplayName()
+        .equals(Utils.chat("&e&l>&6&l>&e&l ACEPTAR &6&l<&e&l<"))
+        && !inventory.getItem(4).getItemMeta().getDisplayName()
+            .equals(Utils.chat("&7&l>&8&l>&7&l ACEPTAR &8&l<&7&l<"))) {
+      return false;
+    }
+    return true;
+  }
+
+  public boolean isGenreInv(Inventory inventory) {
+    if (inventory.getSize() != 18) {
+      return false;
+    }
+    if (!inventory.getItem(1).getItemMeta().getDisplayName()
+        .equals(Utils.chat("&3&l         Soy un chico"))) {
+      return false;
+    }
+    return true;
+  }
+
+  private void promoteInv(Player player, String nextgroup, String genre,
       Boolean hasmoney) {
 
     if (!ConfigManager.configloaded) {
@@ -70,12 +158,11 @@ public class Inventories implements Listener {
     ItemStack cancelascend = createItem(Material.RED_CONCRETE, 1,
         "&c&l>&4&l>&c&l CANCELAR &4&l<&c&l<", lorecancel);
 
-    ItemStack topbackground1   = createBackgroundItem(
-        Material.LIME_STAINED_GLASS_PANE, 1);
-    ItemStack topbackground2   = createBackgroundItem(
-        Material.WHITE_STAINED_GLASS_PANE, 1);
-    ItemStack bottombackground = createBackgroundItem(
-        Material.RED_STAINED_GLASS_PANE, 1);
+    ItemStack topbackground1   = createItem(Material.LIME_STAINED_GLASS_PANE,
+        1);
+    ItemStack topbackground2   = createItem(Material.WHITE_STAINED_GLASS_PANE,
+        1);
+    ItemStack bottombackground = createItem(Material.RED_STAINED_GLASS_PANE, 1);
 
     // GUI distribution
     // TOP Decoration
@@ -132,7 +219,12 @@ public class Inventories implements Listener {
     player.openInventory(i);
   }
 
-  public void openInvGenre(Player player) {
+  private void genreInv(Player player) {
+
+    if (!ConfigManager.configloaded) {
+      return;
+    }
+
     Inventory i = Veteranias.plugin.getServer().createInventory(null, 18,
         Utils.chat("&8 ¡Elige tu &8&lgenero &8en MinExilon!"));
 
@@ -165,12 +257,12 @@ public class Inventories implements Listener {
     ItemStack selectnogenre = createItem(Material.GRAY_CONCRETE, 1,
         "&f&l     Me es indiferente", lorenogenre);
 
-    ItemStack malebackground    = createBackgroundItem(
-        Material.CYAN_STAINED_GLASS_PANE, 1);
-    ItemStack femalebackground  = createBackgroundItem(
-        Material.PURPLE_STAINED_GLASS_PANE, 1);
-    ItemStack nogenrebackground = createBackgroundItem(
-        Material.GRAY_STAINED_GLASS_PANE, 1);
+    ItemStack malebackground    = createItem(Material.CYAN_STAINED_GLASS_PANE,
+        1);
+    ItemStack femalebackground  = createItem(Material.PURPLE_STAINED_GLASS_PANE,
+        1);
+    ItemStack nogenrebackground = createItem(Material.GRAY_STAINED_GLASS_PANE,
+        1);
 
     i.setItem(1, selectmale);
     i.setItem(7, selectfemale);
@@ -191,8 +283,8 @@ public class Inventories implements Listener {
     player.openInventory(i);
   }
 
-  public ItemStack createItem(Material material, int amount, String displayname,
-      ArrayList<String> lore) {
+  private ItemStack createItem(Material material, int amount,
+      String displayname, ArrayList<String> lore) {
     ItemStack itemid   = new ItemStack(material, amount);
     ItemMeta  itemmeta = itemid.getItemMeta();
     itemmeta.setDisplayName(Utils.chat(displayname));
@@ -201,10 +293,10 @@ public class Inventories implements Listener {
     return itemid;
   }
 
-  public ItemStack createBackgroundItem(Material material, int amount) {
+  private ItemStack createItem(Material material, int amount) {
     ItemStack itemid   = new ItemStack(material, amount);
     ItemMeta  itemmeta = itemid.getItemMeta();
-    itemmeta.setDisplayName("");
+    itemmeta.setDisplayName(Utils.chat("&0|"));
     itemid.setItemMeta(itemmeta);
     return itemid;
   }

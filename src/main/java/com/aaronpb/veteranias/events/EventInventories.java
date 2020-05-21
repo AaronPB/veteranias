@@ -24,12 +24,14 @@ import com.aaronpb.veteranias.ConfigManager;
 import com.aaronpb.veteranias.LuckPermsManager;
 import com.aaronpb.veteranias.VaultManager;
 import com.aaronpb.veteranias.Veteranias;
+import com.aaronpb.veteranias.listeners.VeteraniasInventories;
 import com.aaronpb.veteranias.utils.Utils;
 
 public class EventInventories implements Listener {
 
   private LuckPermsManager LPmng = new LuckPermsManager();
   private VaultManager ECONmng = new VaultManager();
+  private VeteraniasInventories inv = new VeteraniasInventories();
 
   private HashMap<UUID, Long> cooldown = new HashMap<UUID, Long>();
 
@@ -43,8 +45,8 @@ public class EventInventories implements Listener {
     if (open == null) {
       return;
     }
-    
-    if (VeteraniasAscendInventory(open)) {
+
+    if (inv.isPromoteInv(open)) {
 
       if (IllegalAction(event.getAction(), event.getClick())) {
         Utils.sendToServerConsole("debug",
@@ -84,6 +86,11 @@ public class EventInventories implements Listener {
               @Override
               public void run() {
                 String playergroup = LPmng.getPlayerGroup(player);
+                if (playergroup == null) {
+                  Utils.sendToServerConsole("warn", player.getName()
+                      + " is not in any group defined in the config file!");
+                  return;
+                }
 
                 String nextgroup = ConfigManager.ranksmap.get(playergroup)
                     .getRanklpgroupascend();
@@ -111,7 +118,7 @@ public class EventInventories implements Listener {
                   // Upgrade process and effects
                   boolean moneytaken = ECONmng.takePlayerMoney(player,
                       ConfigManager.ranksmap.get(nextgroup).getRankCost());
-                  boolean playerpromoted = LPmng.promotePlayer(player);
+                  boolean playerpromoted = LPmng.promotePlayer(player, playergroup);
                   if (!moneytaken) {
                     player.sendMessage(Utils.userPluginTag() + Utils.chat(
                         "&cNo tienes suficientes dracmas para ascender!!"));
@@ -211,7 +218,7 @@ public class EventInventories implements Listener {
         return;
       }
     }
-    if (VeteraniasGenreInventory(open)) {
+    if (inv.isGenreInv(open)) {
 
       if (IllegalAction(event.getAction(), event.getClick())) {
         Utils.sendToServerConsole("debug",
@@ -252,21 +259,21 @@ public class EventInventories implements Listener {
               if (item.getType().equals(Material.CYAN_CONCRETE)) {
                 LPmng.addMalePermission(player);
                 player.sendMessage(Utils.userPluginTag() + Utils.chat(
-                    "&7Has seleccionado el genero masculino. Se ha guardado la informacion correctamente."));
+                    "&7Has seleccionado el genero masculino. Se ha guardado la informacion correctamente. \n&aVuelve a usar /ascender o /rankup para ascender!"));
                 return;
               }
 
               if (item.getType().equals(Material.GRAY_CONCRETE)) {
                 LPmng.addMalePermission(player);
                 player.sendMessage(Utils.userPluginTag() + Utils.chat(
-                    "&7Se te ha agregado al genero masculino. Se ha guardado la informacion correctamente."));
+                    "&7Se te ha agregado al genero masculino. Se ha guardado la informacion correctamente. \n&aVuelve a usar /ascender o /rankup para ascender!"));
                 return;
               }
 
               if (item.getType().equals(Material.PURPLE_CONCRETE)) {
                 LPmng.addFemalePermission(player);
                 player.sendMessage(Utils.userPluginTag() + Utils.chat(
-                    "&7Has seleccionado el genero femenino. Se ha guardado la informacion correctamente."));
+                    "&7Has seleccionado el genero femenino. Se ha guardado la informacion correctamente. \n&aVuelve a usar /ascender o /rankup para ascender!"));
                 return;
               }
             }
@@ -276,32 +283,9 @@ public class EventInventories implements Listener {
     }
   }
 
-  private boolean VeteraniasAscendInventory(Inventory inventory) {
-    if (inventory.getSize() != 45) {
-      return false;
-    }
-    if (!inventory.getItem(4).getItemMeta().getDisplayName()
-        .equals(Utils.chat("&e&l>&6&l>&e&l ACEPTAR &6&l<&e&l<"))
-        && !inventory.getItem(4).getItemMeta().getDisplayName()
-            .equals(Utils.chat("&7&l>&8&l>&7&l ACEPTAR &8&l<&7&l<"))) {
-      return false;
-    }
-    return true;
-  }
-
-  private boolean VeteraniasGenreInventory(Inventory inventory) {
-    if (inventory.getSize() != 18) {
-      return false;
-    }
-    if (!inventory.getItem(1).getItemMeta().getDisplayName()
-        .equals(Utils.chat("&3&l         Soy un chico"))) {
-      return false;
-    }
-    return true;
-  }
-
   private boolean IllegalAction(InventoryAction action, ClickType click) {
-    Utils.sendToServerConsole("debug", "Checking action: " + action + "," + click);
+    Utils.sendToServerConsole("debug",
+        "Checking action: " + action + "," + click);
     switch (action) {
       case CLONE_STACK:
       case DROP_ALL_SLOT:
@@ -321,7 +305,7 @@ public class EventInventories implements Listener {
       default:
         break;
     }
-    switch(click) {
+    switch (click) {
       case SHIFT_LEFT:
       case SHIFT_RIGHT:
       case DOUBLE_CLICK:
