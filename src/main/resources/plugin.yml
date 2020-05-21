@@ -3,7 +3,7 @@ main: com.aaronpb.veteranias.Veteranias
 name: veteranias
 description: Plugin de las veteranias del servidor MinExilon
 website: www.minexilon.com
-version: 0.0.3
+version: 0.1.0
 api-version: 1.15
 
 depend: [LuckPerms, Vault]
@@ -16,6 +16,11 @@ commands:
     description: Command to promote to the next veterania
     permission: veteranias.ascend
     permission-message: No tienes permisos para ejecutar este comando aqui!
+#  changeplayergenre:
+#    usage: /<command> <player> <male|female>
+#    description: Changes player genre
+#    permission: veteranias.admin
+#    permission-message: No tienes permisos para ejecutar este comando.
   vetreload:
     usage: /<command>
     description: Command for save and rewrite config params
@@ -27,5 +32,5 @@ permissions:
     description: Needed to use the /rankup command.
     default: op
   veteranias.admin:
-    description: Needed to use administrator commands such as config reload.
+    description: Needed to use administrator commands.
     default: op
