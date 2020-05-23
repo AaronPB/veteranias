@@ -63,7 +63,7 @@ public class ConfigManager {
       config.options().copyDefaults(true);
       Veteranias.plugin.saveDefaultConfig();
       Utils.sendToServerConsole("warn",
-          "The config file does not exist intro de plugin folder."
+          "The config file does not exist into de plugin folder."
               + " It has been generated again with default params!");
     }
     try {
@@ -155,7 +155,7 @@ public class ConfigManager {
       debugmode = config.getBoolean("DebugMode");
       Utils.sendToServerConsole("info", "[DebugMode] set to " + debugmode);
     } else {
-      levitation = false;
+      debugmode = false;
       Utils.sendToServerConsole("warn",
           "[DebugMode] Not found in config. Setting to false");
     }
