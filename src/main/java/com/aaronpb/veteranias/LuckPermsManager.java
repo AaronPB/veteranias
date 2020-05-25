@@ -109,7 +109,7 @@ public class LuckPermsManager {
       return null;
     }
     Utils.sendToServerConsole("debug", "LPmanager - " + player.getName()
-    + " has the following group list: " + usergroups);
+        + " has the following group list: " + usergroups);
 
     for (String group : usergroups) {
       Utils.sendToServerConsole("debug", "LPmanager - Checking if " + group
@@ -159,16 +159,22 @@ public class LuckPermsManager {
 
     InheritanceNode newnode = InheritanceNode.builder(playerpromotegroup)
         .build();
-    InheritanceNode oldnode = InheritanceNode.builder(playeractualgroup)
-        .build();
 
     user.data().add(newnode);
     Utils.sendToServerConsole("info", "LPmanager - " + player.getName()
         + " has been added to " + playergroupto);
 
-    user.data().remove(oldnode);
-    Utils.sendToServerConsole("info", "LPmanager - " + player.getName()
-        + " has been removed from " + playergroupto);
+    if (!playeractualgroup.getName().equals("default")) {
+      InheritanceNode oldnode = InheritanceNode.builder(playeractualgroup)
+          .build();
+      user.data().remove(oldnode);
+      Utils.sendToServerConsole("info", "LPmanager - " + player.getName()
+          + " has been removed from " + playergroupto);
+    } else {
+      Utils.sendToServerConsole("info",
+          "LPmanager - " + player.getName() + "has not been removed from group "
+              + playergroupfrom + " because it is the default group.");
+    }
 
     lpAPI.getUserManager().saveUser(user);
 
