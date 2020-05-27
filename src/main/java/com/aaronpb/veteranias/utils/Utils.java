@@ -1,6 +1,11 @@
 package com.aaronpb.veteranias.utils;
 
+import java.io.IOException;
+import java.util.Date;
+import java.util.logging.FileHandler;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import org.bukkit.ChatColor;
 
@@ -10,6 +15,8 @@ import com.aaronpb.veteranias.Veteranias;
 public class Utils {
 
   public static final Logger log = Logger.getLogger("Minecraft");
+  public static final Logger promotionslogger = Logger.getLogger("Veteranias");
+  private static FileHandler filehandler;
   private static String pluginname = Veteranias.plugin.getDescription()
       .getName();
 
@@ -41,6 +48,26 @@ public class Utils {
         log.info(String.format("[%s] - %s", pluginname, chat(msg)));
         break;
     }
+  }
+
+  public static void setupLogPromotion() {
+    try {
+      filehandler = new FileHandler(
+          Veteranias.plugin.getDataFolder() + "/veteranias_actions.log", true);
+    } catch (SecurityException | IOException e) {
+      e.printStackTrace();
+    }
+    promotionslogger.addHandler(filehandler);
+    promotionslogger.setUseParentHandlers(false);
+    filehandler.setFormatter(new SimpleFormatter() {
+      private static final String format = "[%1$tF %1$tT] [%2$-7s] %3$s %n";
+
+      @Override
+      public synchronized String format(LogRecord lr) {
+        return String.format(format, new Date(lr.getMillis()),
+            lr.getLevel().getLocalizedName(), lr.getMessage());
+      }
+    });
   }
 
 }

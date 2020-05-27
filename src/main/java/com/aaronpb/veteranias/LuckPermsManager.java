@@ -52,6 +52,8 @@ public class LuckPermsManager {
           + " does no exist in LuckPerms! Returning");
       return;
     }
+    Utils.promotionslogger
+        .info(player.getName() + " - Ha seleccionado el genero masculino");
     addPermission(user, maleperm);
   }
 
@@ -62,6 +64,8 @@ public class LuckPermsManager {
           + " does no exist in LuckPerms! Returning");
       return;
     }
+    Utils.promotionslogger
+        .info(player.getName() + " - Ha seleccionado el genero femenino");
     addPermission(user, femaleperm);
   }
 
@@ -176,6 +180,10 @@ public class LuckPermsManager {
               + playergroupfrom + " because it is the default group.");
     }
 
+    Utils.promotionslogger.info(player.getName() + " - De " + playergroupfrom
+        + " a " + playergroupto + " - Coste: "
+        + ConfigManager.ranksmap.get(playergroupto).getRankCost()
+        + " dracmas.");
     lpAPI.getUserManager().saveUser(user);
 
     return true;

@@ -47,6 +47,7 @@ public class Veteranias extends JavaPlugin {
     Utils.sendToServerConsole("info", "Hoocked successfully into Vault");
 
     cfgm.setup();
+    Utils.setupLogPromotion();
 
     getCommand(admincommands.adminreload_cmd).setExecutor(admincommands);
 //    getCommand(admincommands.adminchangegenre_cmd).setExecutor(admincommands);
