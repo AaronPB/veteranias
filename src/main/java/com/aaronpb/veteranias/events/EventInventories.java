@@ -140,6 +140,9 @@ public class EventInventories implements Listener {
                             player.addPotionEffect(
                                 new PotionEffect(PotionEffectType.LEVITATION,
                                     ConfigManager.levitation_time * 20, 1));
+                            player.addPotionEffect(new PotionEffect(
+                                PotionEffectType.SLOW_FALLING,
+                                ConfigManager.levitation_time * 20 + 60, 1));
                           }
                         });
                   }
