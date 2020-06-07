@@ -84,7 +84,7 @@ public class VeteraniasInventories implements Listener {
     if (inventory.getSize() != 45) {
       return false;
     }
-    if(inventory.getItem(4) == null) {
+    if (inventory.getItem(4) == null) {
       return false;
     }
     String   checkblockname     = inventory.getItem(4).getItemMeta()
@@ -112,7 +112,7 @@ public class VeteraniasInventories implements Listener {
     if (inventory.getSize() != 18) {
       return false;
     }
-    if(inventory.getItem(1) == null) {
+    if (inventory.getItem(1) == null) {
       return false;
     }
     String   checkblockname     = inventory.getItem(1).getItemMeta()
@@ -121,8 +121,8 @@ public class VeteraniasInventories implements Listener {
     if (checkblockname == null || checkblockmaterial == null) {
       return false;
     }
-    if (checkblockname.equals(Utils.chat("&3&l         Soy un chico"))
-        && checkblockmaterial.equals(Material.CYAN_CONCRETE)) {
+    if (!checkblockname.equals(Utils.chat("&3&l         Soy un chico"))
+        || !checkblockmaterial.equals(Material.CYAN_CONCRETE)) {
       return false;
     }
     return true;
