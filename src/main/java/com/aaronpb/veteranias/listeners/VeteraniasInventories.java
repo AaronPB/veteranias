@@ -84,11 +84,26 @@ public class VeteraniasInventories implements Listener {
     if (inventory.getSize() != 45) {
       return false;
     }
-    if (!inventory.getItem(4).getItemMeta().getDisplayName()
-        .equals(Utils.chat("&e&l>&6&l>&e&l ACEPTAR &6&l<&e&l<"))
-        && !inventory.getItem(4).getItemMeta().getDisplayName()
+    if(inventory.getItem(4) == null) {
+      return false;
+    }
+    String   checkblockname     = inventory.getItem(4).getItemMeta()
+        .getDisplayName();
+    Material checkblockmaterial = inventory.getItem(4).getType();
+    if (checkblockname == null || checkblockmaterial == null) {
+      return false;
+    }
+    if (!checkblockname.equals(Utils.chat("&e&l>&6&l>&e&l ACEPTAR &6&l<&e&l<"))
+        && !checkblockname
             .equals(Utils.chat("&7&l>&8&l>&7&l ACEPTAR &8&l<&7&l<"))) {
       return false;
+    }
+    switch (checkblockmaterial) {
+      case GOLD_BLOCK:
+      case IRON_BLOCK:
+        break;
+      default:
+        return false;
     }
     return true;
   }
@@ -97,8 +112,17 @@ public class VeteraniasInventories implements Listener {
     if (inventory.getSize() != 18) {
       return false;
     }
-    if (!inventory.getItem(1).getItemMeta().getDisplayName()
-        .equals(Utils.chat("&3&l         Soy un chico"))) {
+    if(inventory.getItem(1) == null) {
+      return false;
+    }
+    String   checkblockname     = inventory.getItem(1).getItemMeta()
+        .getDisplayName();
+    Material checkblockmaterial = inventory.getItem(1).getType();
+    if (checkblockname == null || checkblockmaterial == null) {
+      return false;
+    }
+    if (checkblockname.equals(Utils.chat("&3&l         Soy un chico"))
+        && checkblockmaterial.equals(Material.CYAN_CONCRETE)) {
       return false;
     }
     return true;
