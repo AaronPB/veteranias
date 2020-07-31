@@ -3,8 +3,8 @@ main: com.aaronpb.veteranias.Veteranias
 name: veteranias
 description: Plugin de las veteranias del servidor MinExilon
 website: www.minexilon.com
-version: 0.1.5
-api-version: 1.15
+version: 0.2.0
+api-version: 1.16
 
 depend: [LuckPerms, Vault]
 
