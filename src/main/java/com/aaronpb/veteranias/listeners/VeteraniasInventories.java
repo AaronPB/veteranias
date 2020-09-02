@@ -140,9 +140,8 @@ public class VeteraniasInventories implements Listener {
       totitle = ranksmap.get(nextgroup).getRankTitleFemale();
     }
 
-    String totitlecolored       = ranksmap.get(nextgroup).getRankTitleColor()
-        + totitle;
-    String totitlecoloredgapped = ConfigManager.prebracket + totitlecolored
+    String totitlecoloredgapped = ConfigManager.prebracket
+        + ranksmap.get(nextgroup).getRankTitleColor() + totitle
         + ConfigManager.postbracket;
 
     Inventory i = Veteranias.plugin.getServer().createInventory(null, 45,
@@ -152,8 +151,8 @@ public class VeteraniasInventories implements Listener {
     int               rankinfoplace   = 22;
     lorenewrankinfo
         .add(Utils.chat("&e&l&m==&e Nueva etiqueta en chat &e&l&m=="));
-    lorenewrankinfo.add(Utils
-        .chat(totitlecoloredgapped + player.getDisplayName() + ": &fHey!"));
+    lorenewrankinfo.add(Utils.chat(
+        totitlecoloredgapped + "&3 " + player.getDisplayName() + "&f: Hey!"));
 
     // Item Aceptar
     ArrayList<String> loreaccept        = new ArrayList<String>();
