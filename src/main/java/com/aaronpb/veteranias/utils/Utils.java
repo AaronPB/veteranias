@@ -6,11 +6,13 @@ import java.util.logging.FileHandler;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-
-import org.bukkit.ChatColor;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.aaronpb.veteranias.ConfigManager;
 import com.aaronpb.veteranias.Veteranias;
+
+import net.md_5.bungee.api.ChatColor;
 
 public class Utils {
 
@@ -19,8 +21,15 @@ public class Utils {
   private static FileHandler filehandler;
   private static String pluginname = Veteranias.plugin.getDescription()
       .getName();
+  private static Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
 
   public static String chat(String s) {
+    Matcher match = pattern.matcher(s);
+    while (match.find()) {
+      String color = s.substring(match.start(), match.end());
+      s = s.replace(color, ChatColor.of(color) + "");
+      match = pattern.matcher(s);
+    }
     return ChatColor.translateAlternateColorCodes('&', s);
   }
 
