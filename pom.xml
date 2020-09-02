@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.aaronpb</groupId>
 	<artifactId>veteranias</artifactId>
-	<version>0.2.0</version>
+	<version>0.2.1</version>
 
 	<build>
 		<plugins>
@@ -31,6 +31,13 @@
 				<version>3.1.1</version>
 			</plugin>
 		</plugins>
+		<resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true
+                </filtering>
+            </resource>
+        </resources>
 	</build>
 
 	<repositories>

@@ -96,17 +96,12 @@ public class ConfigManager {
           config.getString("ascensionlist." + rank + ".lpgroup"));
       setRank.setRanklpgroupascend(
           config.getString("ascensionlist." + rank + ".lpgroupascend"));
-
-      String   datatitlemale    = config
-          .getString("ascensionlist." + rank + ".title_male");
-      String[] titlemale        = datatitlemale.split(":");
-      String   datattitlefemale = config
-          .getString("ascensionlist." + rank + ".title_female");
-      String[] titlefemale      = datattitlefemale.split(":");
-
-      setRank.setRankTitleMale(titlemale[1]);
-      setRank.setRankTitleFemale(titlefemale[1]);
-      setRank.setRankTitleColor(titlemale[0]);
+      setRank.setRankTitleMale(
+          config.getString("ascensionlist." + rank + ".title_male"));
+      setRank.setRankTitleFemale(
+          config.getString("ascensionlist." + rank + ".title_female"));
+      setRank.setRankTitleColor(
+          config.getString("ascensionlist." + rank + ".color"));
       setRank.setRankCost(config.getInt("ascensionlist." + rank + ".cost"));
 
       if (config.isSet("ascensionlist." + rank + ".description")) {
@@ -151,59 +146,23 @@ public class ConfigManager {
 
   private void loadGeneralParams() {
     Utils.sendToServerConsole("info", "Loading config params...");
-    if (config.isSet("DebugMode")) {
-      debugmode = config.getBoolean("DebugMode");
-      Utils.sendToServerConsole("info", "[DebugMode] set to " + debugmode);
-    } else {
-      debugmode = false;
-      Utils.sendToServerConsole("warn",
-          "[DebugMode] Not found in config. Setting to false");
-    }
-    if (config.isSet("levitation_effect")) {
-      levitation = config.getBoolean("levitation_effect");
-      Utils.sendToServerConsole("info",
-          "[levitation_effect] set to " + levitation);
-    } else {
-      levitation = false;
-      Utils.sendToServerConsole("warn",
-          "[levitation_effect] Not found in config. Setting to false");
-    }
-    if (config.isSet("levitation_duration")) {
-      levitation_time = config.getInt("levitation_duration");
-      Utils.sendToServerConsole("info",
-          "[levitation_duration] set to " + levitation_time);
-    } else {
-      levitation_time = 0;
-      Utils.sendToServerConsole("warn",
-          "[levitation_duration] Not found in config. Setting to 0 seconds");
-    }
-    if (config.isSet("setcooldown")) {
-      cooldown = config.getBoolean("setcooldown");
-      Utils.sendToServerConsole("info", "[cooldown] set to " + cooldown);
-    } else {
-      cooldown = true;
-      Utils.sendToServerConsole("warn",
-          "[cooldown] Not found in config. Setting to true");
-    }
-    if (config.isSet("cooldowntime")) {
-      cooldown_time = config.getInt("cooldowntime");
-      Utils.sendToServerConsole("info",
-          "[cooldown_duration] set to " + cooldown_time);
-    } else {
-      cooldown_time = 30;
-      Utils.sendToServerConsole("warn",
-          "[cooldown_duration] Not found in config. Setting to 30 seconds");
-    }
-    if (config.isSet("titleformatpre") && config.isSet("titleformatpost")) {
-      prebracket = config.getString("titleformatpre");
-      postbracket = config.getString("titleformatpost");
-      Utils.sendToServerConsole("info", "[rank brackets] correctly set!");
-    } else {
-      prebracket = "&7[";
-      postbracket = "&7]&r";
-      Utils.sendToServerConsole("warn",
-          "[rank brackets] Not found in config. Setting to default []");
-    }
+    debugmode = config.getBoolean("DebugMode", false);
+    Utils.sendToServerConsole("info", "[DebugMode] set to " + debugmode);
+    levitation = config.getBoolean("levitation_effect", false);
+    Utils.sendToServerConsole("info",
+        "[levitation_effect] set to " + levitation);
+    levitation_time = config.getInt("levitation_duration", 0);
+    Utils.sendToServerConsole("info",
+        "[levitation_duration] set to " + levitation_time);
+    cooldown = config.getBoolean("setcooldown", true);
+    Utils.sendToServerConsole("info", "[cooldown] set to " + cooldown);
+    cooldown_time = config.getInt("cooldowntime", 30);
+    Utils.sendToServerConsole("info",
+        "[cooldown_duration] set to " + cooldown_time);
+    prebracket = config.getString("titleformatpre", "&7[");
+    postbracket = config.getString("titleformatpost", "&7]&r");
+    Utils.sendToServerConsole("info",
+        "[rank brackets] set to: " + prebracket + " and " + postbracket);
   }
 
   private ItemStack loadDescriptions(String itemdesc, String rank) {

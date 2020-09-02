@@ -37,8 +37,9 @@ titleformatpost: '&7]&r'
 # ranktitle: for organization purposes, is not important to define certain name
 #   lpgroup: Name of the actual luckperms group
 #   lpgroupascend: Name of the next luckperms group. If it is the last one, put 'END'
-#   title_male: Rank title for male users. MUST be: &color:TITLE. Ex: &3:King
-#   title_female: Rank title for female users. MUST be: &color:TITLE. Ex: &3:Queen
+#   color: Color of the rank, can be & format or HEX format. Ex: '&7' or '#dcdcdc'
+#   title_male: Rank title for male users.
+#   title_female: Rank title for female users.
 #   description: (Optional) Description items that are shown in the ascend inventory
 #                You can put a total of 12 items for each rank
 #     itemtitle: for organization purposes, is not important to define certain name
@@ -57,14 +58,16 @@ ascensionlist:
   Ermitano:
     lpgroup: ermitano
     lpgroupascend: peregrino
-    title_male: '&7:Ermitaño'
-    title_female: '&7:Ermitaña'
+    color: '#dcdcdc'
+    title_male: 'Ermitaño'
+    title_female: 'Ermitaña'
     cost: 10
   Peregrino:
     lpgroup: peregrino
     lpgroupascend: nomada
-    title_male: '&7:Peregrino'
-    title_female: '&7:Peregrina'
+    color: '&7'
+    title_male: 'Peregrino'
+    title_female: 'Peregrina'
     cost: 1000
     description:
       item1:
@@ -87,8 +90,9 @@ ascensionlist:
   Nomada:
     lpgroup: nomada
     lpgroupascend: explorador
-    title_male: '&7:Nomada'
-    title_female: '&7:Nomada'
+    color: '&7'
+    title_male: 'Nomada'
+    title_female: 'Nomada'
     description:
       item1:
         title: '&9&lOtro home extra!'
@@ -103,8 +107,9 @@ ascensionlist:
   Explorador:
     lpgroup: explorador
     lpgroupascend: END
-    title_male: '&7:Explorador'
-    title_female: '&7:Exploradora'
+    color: '&7'
+    title_male: 'Explorador'
+    title_female: 'Exploradora'
     description:
       item1:
         title: '&9&lOtro home extra!'
